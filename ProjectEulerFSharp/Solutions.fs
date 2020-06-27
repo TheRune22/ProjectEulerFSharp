@@ -3,7 +3,7 @@
 let public Problem1Solution () =
     let int1 = 3
     let int2 = 5
-    let limit = 10
+    let limit = 1000
     let maxMult1 = (limit - 1) / int1
     let maxMult2 = (limit - 1) / int2
     let integerSum n =
