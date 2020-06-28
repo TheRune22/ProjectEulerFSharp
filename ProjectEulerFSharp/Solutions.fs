@@ -43,12 +43,3 @@ let public Solutions =
         Problem3Solution;
         Problem4Solution
     |]
-
-let public PrintAnswer n =
-    printfn "Problem %i Answer: %i" n <| Solutions.[n - 1] ()
-
-let public PrintAnswers () =
-    List.iter PrintAnswer [1 .. Solutions.Length]
-
-let public PrintCurrentAnswer () =
-    PrintAnswer <| Solutions.Length

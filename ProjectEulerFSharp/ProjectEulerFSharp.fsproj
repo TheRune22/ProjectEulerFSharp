@@ -7,7 +7,7 @@
 
     <ItemGroup>
         <Compile Include="Solutions.fs" />
-        <Compile Include="AnonymousSoulutions.fs" />
+        <Compile Include="AnonymousSolutions.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿module ProjectEulerFSharp.AnonymousSoulutions
+﻿module ProjectEulerFSharp.AnonymousSolutions
 
 let public Solutions =
     [|
@@ -57,13 +57,20 @@ let public Solutions =
                     else
                         recHelper int1 (int2 - 1) stop best
             recHelper upperLimit upperLimit 0 0
+
+        fun () ->
+            let limit = 20
+            let getMultiple x =
+                log (float limit) / log (float x)
+                |> int
+                |> pown x
+            let rec recHelper i primes acc =
+                if i > limit then acc
+                else if List.forall (fun x -> i % x <> 0) primes then
+                    getMultiple i
+                    |> Checked.(*) acc
+                    |> recHelper (i + 1) (i :: primes)
+                else
+                    recHelper (i + 1) primes acc
+            recHelper 2 [] 1
     |]
-
-let public PrintAnswer n =
-    printfn "Problem %i Answer: %i" n <| Solutions.[n - 1] ()
-
-let public PrintAnswers () =
-    List.iter PrintAnswer [1 .. Solutions.Length]
-
-let public PrintCurrentAnswer () =
-    PrintAnswer <| Solutions.Length
