@@ -11,6 +11,7 @@ let public Problem1Solution () =
     let union =
         integerSum (maxMult1 / int2) * int2 * int1
     integerSum maxMult1 * int1 + integerSum maxMult2 * int2 - union
+    |> printfn "%i"
 
 let public Problem2Solution () =
     let limit = 4000000
@@ -20,6 +21,7 @@ let public Problem2Solution () =
         if currentFib > limit then acc
         else recHelper (acc + currentFib) (i + 3)
     recHelper 0 0
+    |> printfn "%i"
 
 let public Problem3Solution () =
     let n = 600851475143UL
@@ -32,9 +34,10 @@ let public Problem3Solution () =
         else
             recHelper current (div + 1UL)
     recHelper n 2UL |> int
+    |> printfn "%i"
 
 let public Problem4Solution () =
-    0
+    ()
 
 let public Solutions =
     [|
