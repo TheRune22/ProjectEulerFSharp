@@ -113,10 +113,10 @@ let public Solutions =
                                 // let startIndex = (float nextPrime ** 2.0) - float start |> round |> int
                                 let startIndex = pown (uint64 nextPrime) 2 - uint64 start |> int
                                 if startIndex > arraySize - 1 || startIndex < 0 then
-                                    getPrimes (numPrimes + 1) (nextPrime :: primes)
+                                    ()
                                 else
                                     List.iter (fun x -> arePrime.[x] <- false) [startIndex .. nextPrime .. arraySize - 1]
-                                    getPrimes (numPrimes + 1) (nextPrime :: primes)
+                                getPrimes (numPrimes + 1) (nextPrime :: primes)
                     let nextNumPrimes, nextPrimes = getPrimes numPrimes primes
                     recHelper (start + arraySize) nextNumPrimes nextPrimes
             recHelper 2 0 []
@@ -149,5 +149,51 @@ let public Solutions =
             |> Seq.filter (fun x -> uint64 '0' <= x && x <= uint64 '9')
             |> Seq.windowed windowSize
             |> Seq.map (Array.fold (fun acc x -> x - uint64 '0' |> Checked.(*) acc) 1UL)
-            |> Seq.max |> printfn "%i"
+            |> Seq.max
+            |> printfn "%i"
+        
+        fun () ->
+            let targetSum = 1000
+            let rec recHelper b =
+                let a = targetSum * (2 * b - targetSum) / (2 * b - 2 * targetSum)
+                let c = (2 * b * targetSum - 2 * pown b 2 - pown targetSum 2) / (2 * b - 2 * targetSum)
+                let sum = a + b + c
+                if sum = targetSum then a * b * c
+                else recHelper (b + 1)
+            recHelper 1
+            |> printfn "%i"
+        
+        fun () ->
+            // TODO: optimize (sqrt limit as max, filter multiples of small primes (2, 3))
+            let limit = 2000000
+            let arraySize = 1000
+            let rec recHelper start sum (primes : int list) =
+                if start > limit then sum
+                else
+                    // use List instead?
+                    let arePrime = Array.create arraySize true
+                    let iterator prime =
+                        let startIndex = (prime - start % prime) % prime
+                        if startIndex > arraySize - 1 then ()
+                        else
+                            List.iter (fun x -> arePrime.[x] <- false) [startIndex .. prime .. arraySize - 1]
+                    List.iter iterator primes
+                    let rec getPrimes sum (primes : int list) =
+                        let nextPrimeOption = Option.bind (fun x -> Some (x + start)) (Array.tryFindIndex id arePrime)
+                        if nextPrimeOption.IsNone || nextPrimeOption.Value > limit then (sum, primes)
+                        else
+                            let nextPrime = nextPrimeOption.Value
+                            arePrime.[nextPrime - start] <- false
+                            // let startIndex = (float nextPrime ** 2.0) - float start |> round |> int
+                            let startIndex = pown (uint64 nextPrime) 2 - uint64 start |> int
+                            let stopIndex = min (arraySize - 1) (limit - start - 1)
+                            if startIndex > stopIndex || startIndex < 0 then
+                                ()
+                            else
+                                List.iter (fun x -> arePrime.[x] <- false) [startIndex .. nextPrime .. stopIndex]
+                            getPrimes (Checked.(+) sum <| uint64 nextPrime) (nextPrime :: primes)
+                    let nextSum, nextPrimes = getPrimes sum primes
+                    recHelper (start + arraySize) nextSum nextPrimes
+            recHelper 2 0UL []
+            |> printfn "%i"
     |]
