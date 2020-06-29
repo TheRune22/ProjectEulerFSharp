@@ -73,4 +73,34 @@ let public Solutions =
                 else
                     recHelper (i + 1) primes acc
             recHelper 2 [] 1
+        
+        fun () ->
+            let n = 100
+            let sumOfSquares = n * (n + 1) * (2 * n + 1) / 6
+            let squareOfSum = pown ((n * (n + 1)) / 2) 2
+            squareOfSum - sumOfSquares
+        
+        fun () ->
+            let targetPrime = 6
+            let arraySize = 15
+            let rec recHelper start numPrimes (primes : int list) =
+                if numPrimes = targetPrime then primes.Head
+                else
+                    // use List instead
+                    let arePrime = Array.create arraySize true
+                    let rec getPrimes numPrimes (primes : int list) =
+                        if numPrimes = targetPrime then (numPrimes, primes)
+                        else
+                            // existing primes should be iterated
+                            // check end of list
+                            let nextPrime = start + Array.findIndex id arePrime
+                            if nextPrime = -1 then (numPrimes, primes)
+                            else
+                                arePrime.[nextPrime - start] <- false
+                                List.iter (fun x -> arePrime.[x] <- false) [pown nextPrime 2 - start .. nextPrime .. arraySize - 1]
+                                getPrimes (numPrimes + 1) (nextPrime :: primes)
+                    let nextNumPrimes, nextPrimes = getPrimes numPrimes primes
+                    recHelper (start + arraySize) nextNumPrimes nextPrimes
+            recHelper 2 0 []
+                
     |]
