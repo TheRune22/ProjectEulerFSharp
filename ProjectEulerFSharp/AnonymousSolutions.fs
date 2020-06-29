@@ -81,24 +81,37 @@ let public Solutions =
             squareOfSum - sumOfSquares
         
         fun () ->
-            let targetPrime = 6
-            let arraySize = 15
+            let targetPrime = 10001
+            let arraySize = 10000
             let rec recHelper start numPrimes (primes : int list) =
                 if numPrimes = targetPrime then primes.Head
                 else
-                    // use List instead
+                    // use List instead, filter with primes already found
                     let arePrime = Array.create arraySize true
+                    let iterator prime =
+                        let startIndex = (prime - start % prime) % prime
+                        if startIndex > arraySize - 1 then ()
+                        else
+                            let iterator x =
+                                let test = x + start
+                                arePrime.[x] <- false
+                            List.iter iterator [startIndex .. prime .. arraySize - 1]
+                    List.iter iterator primes
                     let rec getPrimes numPrimes (primes : int list) =
                         if numPrimes = targetPrime then (numPrimes, primes)
                         else
-                            // existing primes should be iterated
-                            // check end of list
-                            let nextPrime = start + Array.findIndex id arePrime
-                            if nextPrime = -1 then (numPrimes, primes)
+                            let nextPrimeOption = Option.bind (fun x -> Some (x + start)) (Array.tryFindIndex id arePrime)
+                            if nextPrimeOption.IsNone then (numPrimes, primes)
                             else
+                                let nextPrime = nextPrimeOption.Value
                                 arePrime.[nextPrime - start] <- false
-                                List.iter (fun x -> arePrime.[x] <- false) [pown nextPrime 2 - start .. nextPrime .. arraySize - 1]
-                                getPrimes (numPrimes + 1) (nextPrime :: primes)
+                                let startIndex = (float nextPrime ** 2.0) - float start |> round |> int
+                                if startIndex > arraySize - 1 || startIndex < 0 then
+                                    getPrimes (numPrimes + 1) (nextPrime :: primes)
+                                else
+                                    // IndexOutOfBounds
+                                    List.iter (fun x -> arePrime.[x] <- false) [startIndex .. nextPrime .. arraySize - 1]
+                                    getPrimes (numPrimes + 1) (nextPrime :: primes)
                     let nextNumPrimes, nextPrimes = getPrimes numPrimes primes
                     recHelper (start + arraySize) nextNumPrimes nextPrimes
             recHelper 2 0 []
